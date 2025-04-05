@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using WebAppSalesManagement.Filters;
 using WebAppSalesManagement.Models;
 
 namespace WebAppSalesManagement.Controllers
 {
+    [Auth]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
