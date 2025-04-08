@@ -11,9 +11,7 @@ namespace WebAppSalesManagement.Models
         [Required(ErrorMessage = "La contraseña es requerida")]
         [DataType(DataType.Password)]
         [Display(Name = "Contraseña")]
-        public string ContraseñaHash { get; set; }
+        public string Contraseña { get; set; }
 
-        [Display(Name = "Recordarme")]
-        public bool RememberMe { get; set; }
     }
 }

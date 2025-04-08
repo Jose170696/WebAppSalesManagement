@@ -1,26 +1,14 @@
-using WebAppSalesManagement.Middleware;
 using WebAppSalesManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
-// Agregar soporte para sesiones
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
+builder.Services.AddSession(); // Habilita el servicio de sesión
+builder.Services.AddHttpClient<AuthService>(client =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
+    client.BaseAddress = new Uri("http://localhost:5240");
 });
-
-// Registrar HttpClient y servicios personalizados
-builder.Services.AddHttpClient();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ApiService>();
-builder.Services.AddScoped<AuthService>();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,18 +21,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-app.UseRouting();
-
 app.UseSession();
-
-// Usar el middleware personalizado para configurar el token
-app.UseTokenMiddleware();
-
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Login}/{id?}");
 
 app.Run();
