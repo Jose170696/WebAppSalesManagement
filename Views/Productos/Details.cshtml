@@ -1,0 +1,55 @@
+﻿@model WebAppSalesManagement.Models.ProductoViewModel
+
+@{
+    ViewData["Title"] = "Detalles del Producto";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detalles del Producto</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ProductoID)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.ProductoID)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Precio)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Precio)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Stock)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Stock)</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Creado Por</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.AdicionadoPor)</dd>
+
+                        <dt class="col-sm-4">Fecha Creación</dt>
+                        <dd class="col-sm-8">@(Model.FechaAdicion.HasValue ? Model.FechaAdicion.Value.ToString("dd/MM/yyyy HH:mm") : "-")</dd>
+
+                        <dt class="col-sm-4">Modificado Por</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.ModificadoPor) ? "-" : Model.ModificadoPor)</dd>
+
+                        <dt class="col-sm-4">Fecha Modificación</dt>
+                        <dd class="col-sm-8">@(Model.FechaModificacion.HasValue ? Model.FechaModificacion.Value.ToString("dd/MM/yyyy HH:mm") : "-")</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="form-group mt-3">
+                <a asp-action="Edit" asp-route-id="@Model.ProductoID" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

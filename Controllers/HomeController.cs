@@ -9,6 +9,7 @@ namespace WebAppSalesManagement.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly AuthService _authService;
+        public static string userNombre;
 
         // Constructor que inyecta el servicio de autenticación
         public HomeController(ILogger<HomeController> logger, AuthService authService)
@@ -45,7 +46,9 @@ namespace WebAppSalesManagement.Controllers
                     {
                         _logger.LogInformation($"Usuario autenticado: {model.NombreUsuario}");
                         TempData["MensajeBienvenida"] = "¡Bienvenido/a al sistema!";
+                        userNombre = model.NombreUsuario;
                         return RedirectToAction("Index");
+                       
                     }
                     else
                     {
