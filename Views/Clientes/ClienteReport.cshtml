@@ -1,0 +1,30 @@
+﻿@model List<WebAppSalesManagement.Models.ClienteViewModel>
+
+<h2>Reporte de Clientes</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Pais</th>
+            <th>Provincia</th>
+            <th>Canton</th>
+            <th>Distrito</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cliente in Model)
+        {
+            <tr>
+                <td>@cliente.Nombre</td>
+                <td>@cliente.Correo</td>
+                <td>@cliente.Telefono</td>
+                <td>@cliente.Pais</td>
+                <td>@cliente.Provincia</td>
+                <td>@cliente.Canton</td>
+                <td>@cliente.Distrito</td>
+            </tr>
+        }
+    </tbody>
+</table>

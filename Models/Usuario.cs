@@ -6,9 +6,14 @@ namespace WebAppSalesManagement.Models
     {
         [Key]
         public int UsuarioID { get; set; }
+        [Required]
         public string NombreUsuario { get; set; }
+        [Required]
         public string ContraseñaHash { get; set; }
+        [Required]
         public string NombreCompleto { get; set; }
+        [Required]
+        [EmailAddress]
         public string Correo { get; set; }
         public int RolID { get; set; }
         public string Estado { get; set; }

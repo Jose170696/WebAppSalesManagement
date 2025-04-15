@@ -1,4 +1,10 @@
-﻿@{
+﻿@if (TempData["MensajeBienvenida"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["MensajeBienvenida"]
+    </div>
+}
+@{
     ViewData["Title"] = "Inicio";
 }
 

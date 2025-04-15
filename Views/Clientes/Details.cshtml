@@ -1,0 +1,67 @@
+﻿@model WebAppSalesManagement.Models.ClienteViewModel
+
+@{
+    ViewData["Title"] = "Detalles del Cliente";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detalles del Cliente</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ClienteID)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.ClienteID)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Correo)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Correo)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Telefono)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Telefono)</dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">País</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Pais)</dd>
+
+                        <dt class="col-sm-4">Provincia</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Provincia)</dd>
+
+                        <dt class="col-sm-4">Cantón</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Canton)</dd>
+
+                        <dt class="col-sm-4">Distrito</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Distrito)</dd>
+
+                        <dt class="col-sm-4">Creado Por</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.AdicionadoPor)</dd>
+
+                        <dt class="col-sm-4">Fecha Creación</dt>
+                        <dd class="col-sm-8">@(Model.FechaAdicion.HasValue ? Model.FechaAdicion.Value.ToString("dd/MM/yyyy HH:mm") : "-")</dd>
+
+                        <dt class="col-sm-4">Modificado Por</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.ModificadoPor) ? "-" : Model.ModificadoPor)</dd>
+
+                        <dt class="col-sm-4">Fecha Modificación</dt>
+                        <dd class="col-sm-8">@(Model.FechaModificacion.HasValue ? Model.FechaModificacion.Value.ToString("dd/MM/yyyy HH:mm") : "-")</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="form-group mt-3">
+                <a asp-action="Edit" asp-route-id="@Model.ClienteID" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

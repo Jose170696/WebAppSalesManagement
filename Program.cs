@@ -1,3 +1,4 @@
+using Rotativa.AspNetCore;
 using System.Globalization;
 using WebAppSalesManagement.Services;
 
@@ -14,6 +15,12 @@ builder.Services.AddSession(); // Habilita el servicio de sesión
 
 // Configuración del servicio de autenticación
 builder.Services.AddHttpClient<AuthService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7109/");
+});
+
+// Registro del servicio de clientes
+builder.Services.AddHttpClient<ClienteApiService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7109/");
 });
@@ -43,5 +50,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Login}/{id?}");
+
+string wwroot = app.Environment.WebRootPath;
+Rotativa.AspNetCore.RotativaConfiguration.Setup(wwroot, "Rotativa");
 
 app.Run();

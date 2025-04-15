@@ -1,4 +1,12 @@
 ﻿@model WebAppSalesManagement.Models.LoginViewModel
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @ViewBag.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 @{
     ViewData["Title"] = "Iniciar Sesión";
     Layout = "_Layout";
@@ -34,3 +42,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

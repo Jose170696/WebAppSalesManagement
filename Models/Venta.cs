@@ -14,6 +14,6 @@ namespace WebAppSalesManagement.Models
         public string? ModificadoPor { get; set; }
         public DateTime? FechaModificacion { get; set; }
 
-        public Cliente Cliente { get; set; }
+        public ClienteViewModel Cliente { get; set; }
     }
 }
