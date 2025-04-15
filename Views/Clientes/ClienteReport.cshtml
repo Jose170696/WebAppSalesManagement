@@ -1,6 +1,30 @@
 ﻿@model List<WebAppSalesManagement.Models.ClienteViewModel>
 
-<h2>Reporte de Clientes</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Reporte de Clientes</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">Reporte de Clientes</h2>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -26,5 +50,7 @@
                 <td>@cliente.Distrito</td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</body>
+</html>
