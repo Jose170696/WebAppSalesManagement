@@ -9,7 +9,7 @@ namespace WebAppSalesManagement.Models
         [Required]
         public string NombreUsuario { get; set; }
         [Required]
-        public string ContraseñaHash { get; set; }
+        public string Contraseña { get; set; }
         [Required]
         public string NombreCompleto { get; set; }
         [Required]
