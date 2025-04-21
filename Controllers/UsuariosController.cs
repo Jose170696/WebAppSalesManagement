@@ -58,7 +58,7 @@ namespace WebAppSalesManagement.Controllers
                     TempData["Success"] = message;
                     return RedirectToAction(nameof(Index));
                 }
-                TempData["Error"] = message;
+                ModelState.AddModelError(string.Empty, message);
             }
             return View(usuario);
         }

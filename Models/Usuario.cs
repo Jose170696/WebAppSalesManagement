@@ -17,8 +17,7 @@ namespace WebAppSalesManagement.Models
         public string Correo { get; set; }
         public int RolID { get; set; }
         public string Estado { get; set; }
-        public string? RolNombre { get; set; }
-
-        public Roles Rol { get; set; }
+        public string RolNombre { get; set; }
+        public DateTime? FechaRegistro { get; set; }
     }
 }

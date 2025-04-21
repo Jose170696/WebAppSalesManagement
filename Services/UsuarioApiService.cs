@@ -46,7 +46,7 @@ namespace WebAppSalesManagement.Services
 
                 return response.IsSuccessStatusCode
                     ? (true, "Usuario creado correctamente")
-                    : (false, $"Error: {response.StatusCode} - {responseContent}");
+                    : (false, responseContent);
             }
             catch (Exception ex)
             {
