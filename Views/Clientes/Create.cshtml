@@ -51,6 +51,12 @@
                     <input asp-for="Distrito" class="form-control" />
                 </div>
 
+                <div class="form-group">
+                    <label asp-for="AdicionadoPor" class="control-label"></label>
+                    <input asp-for="AdicionadoPor" class="form-control" value="Admin" readonly />
+                    <span asp-validation-for="AdicionadoPor" class="text-danger"></span>
+                </div>
+
                 <div class="form-group mt-3">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear</button>
                     <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
