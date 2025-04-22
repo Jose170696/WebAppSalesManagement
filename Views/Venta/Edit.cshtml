@@ -1,0 +1,236 @@
+﻿@model WebAppSalesManagement.Models.VentaConDetalles
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Editar Venta";
+    var idValue = ViewContext.RouteData.Values["id"]?.ToString() ?? "0";
+    // Serializa los detalles existentes para el JS
+    var detallesJson = JsonSerializer.Serialize(
+        Model.Detalles.Select(d => new
+        {
+            productoID = d.ProductoID,
+            cantidad = d.Cantidad,
+            subtotal = d.Subtotal
+        })
+    );
+}
+
+<h1>Editar Venta #@idValue</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit" asp-route-id="@idValue" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    Información de la Venta
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Cliente -->
+                        <div class="col-md-6">
+                            <label asp-for="ClienteID" class="form-label">Cliente</label>
+                            <select asp-for="ClienteID"
+                                    asp-items="ViewBag.Clientes"
+                                    class="form-select">
+                                <option value="">-- Seleccione un Cliente --</option>
+                            </select>
+                            <span asp-validation-for="ClienteID" class="text-danger"></span>
+                        </div>
+                        <!-- Total -->
+                        <div class="col-md-6">
+                            <label class="form-label">Total</label>
+                            <input type="hidden" asp-for="Total" id="Total" />
+                            <input type="text" id="totalVentaDisplay"
+                                   class="form-control"
+                                   readonly />
+                            <span asp-validation-for="Total" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <span>Detalles de Productos</span>
+                    <button type="button" class="btn btn-light" id="agregarProducto">
+                        Agregar Producto
+                    </button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped" id="tablaProductos">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-end">Total:</th>
+                                <th colspan="2" id="totalFooter">0,00</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <template id="filaProductoTemplate">
+                <tr>
+                    <td>
+                        <input type="hidden" name="Detalles.Index" value="{index}" />
+                        <select class="form-select producto-select"
+                                name="Detalles[{index}].ProductoID"
+                                required>
+                            <option value="">-- Seleccione un Producto --</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number"
+                               class="form-control cantidad-input"
+                               name="Detalles[{index}].Cantidad"
+                               value="1"
+                               min="1"
+                               step="1"
+                               required />
+                    </td>
+                    <td>
+                        <input type="text"
+                               class="form-control precio-input"
+                               value="0,00"
+                               readonly />
+                    </td>
+                    <td>
+                        <input type="text"
+                               class="form-control subtotal-input"
+                               name="Detalles[{index}].Subtotal"
+                               value="0,00"
+                               readonly />
+                    </td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-danger eliminar-fila">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </template>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        let contadorFilas = 0;
+        let productos = [];
+        const detallesPre = @Html.Raw(detallesJson);
+
+        $(function () {
+            // Cargar lista real de productos
+            fetch('@Url.Action("ObtenerProductosJson", "Productos")')
+                .then(r => r.json())
+                .then(data => {
+                    productos = data;
+                    // Pre‑llenar filas con datos existentes
+                    if (detallesPre.length) {
+                        contadorFilas = detallesPre.length;
+                        detallesPre.forEach((det, i) => agregarFila(i, det));
+                    } else {
+                        agregarFila();
+                    }
+                    calcularTotal();
+                });
+
+            $("#agregarProducto").click(agregarFila);
+
+            $("#tablaProductos")
+                .on("click", ".eliminar-fila", function () {
+                    if ($("#tablaProductos tbody tr").length > 1) {
+                        $(this).closest("tr").remove();
+                        calcularTotal();
+                    }
+                })
+                .on("change", ".producto-select", actualizarPrecio)
+                .on("input", ".cantidad-input", calcularSubtotal);
+        });
+
+        function agregarFila(prefillIndex, det) {
+            const index = prefillIndex != null
+                ? prefillIndex
+                : contadorFilas++;
+            const tpl = $("#filaProductoTemplate").html()
+                           .replace(/{index}/g, index);
+            $("#tablaProductos tbody").append(tpl);
+
+            const $row = $("#tablaProductos tbody tr").last();
+            const $sel = $row.find(".producto-select");
+            productos.forEach(p => {
+                $sel.append(`<option value="${p.productoID}">${p.nombre}</option>`);
+            });
+
+            if (det) {
+                $sel.val(det.productoID);
+                $row.find(".cantidad-input").val(det.cantidad);
+                const unit = (det.subtotal / det.cantidad)
+                              .toFixed(2).replace('.', ',');
+                const sub = det.subtotal
+                              .toFixed(2).replace('.', ',');
+                $row.find(".precio-input").val(unit);
+                $row.find(".subtotal-input").val(sub);
+            }
+        }
+
+        function actualizarPrecio() {
+            const $row = $(this).closest("tr");
+            const prod = productos.find(p => p.productoID == $(this).val());
+            if (prod) {
+                const precio = prod.precio
+                                   .toFixed(2).replace('.', ',');
+                $row.find(".precio-input").val(precio);
+                calcularSubtotal.call(this);
+            }
+        }
+
+        function calcularSubtotal() {
+            const $row = $(this).closest("tr");
+            const qty   = parseFloat($row.find(".cantidad-input").val()) || 0;
+            const price = parseFloat(
+                              $row.find(".precio-input")
+                                  .val().replace(',', '.')
+                          ) || 0;
+            const sub = (qty * price)
+                              .toFixed(2).replace('.', ',');
+            $row.find(".subtotal-input").val(sub);
+            calcularTotal();
+        }
+
+        function calcularTotal() {
+            let total = 0;
+            $(".subtotal-input").each((_, el) => {
+                total += parseFloat($(el)
+                                    .val().replace(',', '.')
+                                   ) || 0;
+            });
+            const display = total
+                              .toFixed(2).replace('.', ',');
+            $("#totalVentaDisplay").val(display);
+            $("#Total").val(total.toFixed(2));
+            $("#totalFooter").text(`${display}`);
+        }
+    </script>
+}

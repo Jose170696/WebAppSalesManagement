@@ -1,0 +1,57 @@
+﻿@model IEnumerable<WebAppSalesManagement.Models.VentaCompleta>
+
+@{
+    ViewData["Title"] = "Listado de Ventas";
+}
+
+<h1>Listado de Ventas</h1>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Crear Nueva Venta</a>
+    <a asp-action="GenerarPDF" class="btn btn-info">Generar Reporte PDF</a>
+</p>
+
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.VentaID</td>
+                <td>@item.Nombre</td>
+                <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@item.Total.ToString("C")</td>
+                <td>
+                    <div class="btn-group">
+                        <a asp-action="Details" asp-route-id="@item.VentaID" class="btn btn-sm btn-info">Detalles</a>
+                        <a asp-action="Edit" asp-route-id="@item.VentaID" class="btn btn-sm btn-warning">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.VentaID" class="btn btn-sm btn-danger">Eliminar</a>
+                        <a asp-action="GenerarPDFVenta" asp-route-id="@item.VentaID" class="btn btn-sm btn-secondary">PDF</a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

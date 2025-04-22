@@ -1,0 +1,170 @@
+﻿@model WebAppSalesManagement.Models.VentaCompleta
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle de Venta #@Model.VentaID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            .header h1 {
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .header p {
+                color: #666;
+            }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+            .info-section h2 {
+                color: #333;
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 5px;
+            }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f2f2f2;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Detalle de Venta #@Model.VentaID</h1>
+        <p>Fecha de generación: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
+
+    <div class="info-section">
+        <h2>Información de la Venta</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Cliente:</div>
+                <div>@Model.Nombre</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Fecha de Venta:</div>
+                <div>@Model.Fecha.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Total:</div>
+                <div>@Model.Total.ToString("C")</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Creado por:</div>
+                <div>@Model.AdicionadoPor</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Fecha de Creación:</div>
+                <div>@Model.FechaAdicion.ToString("dd/MM/yyyy HH:mm")</div>
+            </div>
+            @if (Model.ModificadoPor != null)
+            {
+                <div class="info-item">
+                    <div class="info-label">Modificado por:</div>
+                    <div>@Model.ModificadoPor</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Fecha de Modificación:</div>
+                    <div>@(Model.FechaModificacion?.ToString("dd/MM/yyyy HH:mm"))</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="info-section">
+        <h2>Detalle de Productos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var detalle in Model.Detalles)
+                {
+                    <tr>
+                        <td>@detalle.NombreProducto</td>
+                        <td>@detalle.Cantidad</td>
+                        <td>@detalle.Subtotal.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="2" style="text-align: right">Total:</td>
+                    <td>@Model.Total.ToString("C")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>© @DateTime.Now.Year - Sistema de Gestión de Ventas</p>
+    </div>
+</body>
+</html>

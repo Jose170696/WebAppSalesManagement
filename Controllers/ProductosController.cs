@@ -67,7 +67,7 @@ namespace WebAppSalesManagement.Controllers
             {
                 try
                 {
-                    // Asigna el usuario por defecto
+                    // Asigna el usuario logueado
                     producto.AdicionadoPor = HomeController.userNombre;
                     Console.WriteLine($"Enviando producto: {JsonSerializer.Serialize(producto)}");
 
@@ -138,7 +138,7 @@ namespace WebAppSalesManagement.Controllers
             {
                 try
                 {
-                    // Asigna el usuario por defecto para modificaciones
+                    // Asigna el usuario logueado 
                     producto.ModificadoPor = HomeController.userNombre;
                     var result = await _productoApiService.ActualizarProductoAsync(id, producto);
                     if (result)
@@ -196,6 +196,25 @@ namespace WebAppSalesManagement.Controllers
                 TempData["Error"] = $"Error al eliminar producto: {ex.Message}";
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerProductosJson()
+        {
+            try
+            {
+                var productos = await _productoApiService.ObtenerProductosAsync();
+                var dto = productos.Select(p => new {
+                    productoID = p.ProductoID,
+                    nombre = p.Nombre,
+                    precio = p.Precio
+                });
+                return Json(dto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al cargar productos: {ex.Message}");
+            }
         }
     }
 }

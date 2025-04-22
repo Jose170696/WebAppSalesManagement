@@ -1,0 +1,94 @@
+﻿@model IEnumerable<WebAppSalesManagement.Models.VentaCompleta>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reporte de Ventas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Reporte de Ventas</h1>
+        <p>Fecha de generación: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Creado por</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venta in Model)
+            {
+                <tr>
+                    <td>@venta.VentaID</td>
+                    <td>@venta.Nombre</td>
+                    <td>@venta.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@venta.Total.ToString("C")</td>
+                    <td>@venta.AdicionadoPor</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" style="text-align: right">Total General:</th>
+                <th colspan="2">@Model.Sum(v => v.Total).ToString("C")</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="footer">
+        <p>© @DateTime.Now.Year - Sistema de Gestión de Ventas</p>
+    </div>
+</body>
+</html>

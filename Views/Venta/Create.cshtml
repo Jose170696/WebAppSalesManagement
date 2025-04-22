@@ -1,0 +1,206 @@
+﻿@model WebAppSalesManagement.Models.VentaConDetalles
+
+@{
+    ViewData["Title"] = "Crear Venta";
+}
+
+<h1>Crear Nueva Venta</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Información de la Venta</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Cliente -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ClienteID" class="control-label">Cliente</label>
+                                <select asp-for="ClienteID"
+                                        asp-items="ViewBag.Clientes"
+                                        class="form-control">
+                                    <option value="">-- Seleccione un Cliente --</option>
+                                </select>
+                                <span asp-validation-for="ClienteID" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Total -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Total</label>
+                                <input type="hidden" asp-for="Total" id="Total" />
+                                <input type="text"
+                                       class="form-control"
+                                       readonly
+                                       id="totalVentaDisplay" />
+                                <span asp-validation-for="Total" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Detalles de Productos</h5>
+                    <button type="button" class="btn btn-light" id="agregarProducto">Agregar Producto</button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped" id="tablaProductos">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Subtotal</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-right">Total:</th>
+                                <th colspan="2" id="totalFooter">$0.00</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <template id="filaProductoTemplate">
+                <tr>
+                    <td>
+                        <select class="form-control producto-select"
+                                name="Detalles[{index}].ProductoID" required>
+                            <option value="">-- Seleccione un Producto --</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number"
+                               class="form-control cantidad-input"
+                               name="Detalles[{index}].Cantidad"
+                               value="1"
+                               min="1"
+                               step="1"
+                               required />
+                    </td>
+                    <td>
+                        <input type="text"
+                               class="form-control precio-input"
+                               value="0.00"
+                               readonly />
+                    </td>
+                    <td>
+                        <input type="text"
+                               class="form-control subtotal-input"
+                               name="Detalles[{index}].Subtotal"
+                               value="0.00"
+                               readonly />
+                    </td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-danger eliminar-fila">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            </template>
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Crear Venta" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        let contadorFilas = 0;
+        let productos = [];
+
+        $(function () {
+            // Obtener productos reales
+            fetch('@Url.Action("ObtenerProductosJson", "Productos")')
+                .then(r => r.json())
+                .then(data => {
+                    productos = data;
+                    agregarFilaProducto();
+                })
+                .catch(e => console.error(e));
+
+            $("#agregarProducto").click(agregarFilaProducto);
+
+            $("#tablaProductos")
+                .on("click", ".eliminar-fila", eliminarFilaProducto)
+                .on("change", ".producto-select", actualizarPrecioProducto)
+                .on("input", ".cantidad-input", calcularSubtotal);
+        });
+
+        function agregarFilaProducto() {
+            const tpl = $("#filaProductoTemplate").html()
+                          .replace(/{index}/g, contadorFilas++);
+            $("#tablaProductos tbody").append(tpl);
+
+            const $sel = $("#tablaProductos tbody tr:last .producto-select");
+            productos.forEach(p =>
+                $sel.append(`<option value="${p.productoID}">${p.nombre}</option>`)
+            );
+        }
+
+        function eliminarFilaProducto() {
+            if ($("#tablaProductos tbody tr").length > 1) {
+                $(this).closest("tr").remove();
+                calcularTotal();
+            }
+        }
+
+        function actualizarPrecioProducto() {
+            const $row = $(this).closest("tr");
+            const prod = productos.find(x => x.productoID == $(this).val());
+            if (prod) {
+                // precio con 2 decimales y coma decimal
+                const precio = prod.precio.toFixed(2).replace('.', ',');
+                $row.find(".precio-input").val(precio);
+                calcularSubtotal.call(this);
+            }
+        }
+
+        function calcularSubtotal() {
+            const $row = $(this).closest("tr");
+            const qty = parseFloat($row.find(".cantidad-input").val().replace(',', '.')) || 0;
+            const price = parseFloat($row.find(".precio-input").val().replace(',', '.')) || 0;
+            const sub = qty * price;
+            // subtotal con coma decimal
+            $row.find(".subtotal-input").val(sub.toFixed(2).replace('.', ','));
+            calcularTotal();
+        }
+
+        function calcularTotal() {
+            let sum = 0;
+            $(".subtotal-input").each((_, el) => {
+                sum += parseFloat($(el).val().replace(',', '.')) || 0;
+            });
+            // formateo: siempre dos decimales, coma decimal
+            const formatted = sum.toFixed(2).replace('.', ',');
+            // mostrar con coma
+            $("#totalVentaDisplay").val(formatted);
+            // hidden binder (usa punto)
+            $("#Total").val(sum.toFixed(2));
+            $("#totalFooter").text(`${formatted} €`);
+        }
+    </script>
+}

@@ -31,6 +31,12 @@ builder.Services.AddHttpClient<ProductoApiService>(client =>
     client.BaseAddress = new Uri("https://localhost:7109/");
 });
 
+// Registro del servicio de ventas
+builder.Services.AddHttpClient<VentaApiService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7109/");
+});
+
 // Registro del servicio de usuarios
 builder.Services.AddHttpClient<UsuarioApiService>(client =>
 {
